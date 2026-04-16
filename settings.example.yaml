@@ -1,4 +1,3 @@
-
 encoding_model: cl100k_base
 skip_workflows: []
 llm:
@@ -8,7 +7,7 @@ llm:
   model_supports_json: true # recommended if this is available for your model.
   max_tokens: 8192
   # request_timeout: 180.0
-  api_base: http://localhost:11434/v1
+  api_base: http://ollama:11434/v1
   # api_version: 2024-02-15-preview
   # organization: <organization_id>
   # deployment_name: <azure_model_deployment_name>
@@ -32,7 +31,7 @@ embeddings:
     api_key: ${GRAPHRAG_API_KEY}
     type: openai_embedding # or azure_openai_embedding
     model: nomic-embed-text:latest
-    api_base: http://localhost:11434/api
+    api_base: http://ollama:11434/api
     # api_version: 2024-02-15-preview
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>

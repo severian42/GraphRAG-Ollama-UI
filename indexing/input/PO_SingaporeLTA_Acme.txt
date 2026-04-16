@@ -1,0 +1,27 @@
+OFFICIAL PURCHASE ORDER
+
+PO NUMBER: LTA-2026-88492
+
+DATE OF ISSUE: April 2, 2026
+
+BUYER: > Singapore Land Transport Authority (LTA)
+
+1 Hampshire Road
+
+Singapore 219428
+
+VENDOR: > Acme Systems LLC
+
+Enterprise Solutions Division
+
+LINE ITEMS: > 1. Custom AI Traffic Analytics Dashboard - Qty: 1 - $125,000
+
+2. High-Performance Compute Cluster Setup - Qty: 1 - $85,000
+
+3. Data Analytics Enterprise Software Bundle (Includes Quantus AI Studio & Novalytica Enterprise License) - Qty: 1 - $150,000
+
+4. 24/7 Managed Support Services (1 Year) - Qty: 1 - $40,000
+
+TOTAL: $400,000 USD
+
+TERMS: Net 30. Delivery expected by May 15, 2026.

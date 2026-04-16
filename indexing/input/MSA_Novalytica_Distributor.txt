@@ -1,0 +1,15 @@
+MASTER SOFTWARE RESELLER AGREEMENT
+
+EFFECTIVE DATE: January 1, 2025
+
+PARTIES: Novalytica, Inc. ("Vendor") and Global Tech Distribution Corp ("Distributor")
+
+1. APPOINTMENT > Vendor hereby appoints Distributor as a non-exclusive distributor of the Vendor's enterprise software products within the agreed territory.
+
+2. BUNDLING AND RESALE > Distributor may grant downstream System Integrators (SIs) the right to bundle Vendor software with authorized hardware and services.
+
+3. COMPLIANCE AND RESTRICTIONS > 3.1 General Compliance: Distributor and its authorized SIs shall comply with all applicable local and international trade laws.
+
+3.2 Government Sales Restriction: Resale of enterprise software licenses to municipal or national government entities is strictly prohibited without 30 days prior written consent from Novalytica, Inc. Failure to obtain consent will result in immediate termination of the downstream license and potential liability for the Distributor.
+
+4. TERM AND TERMINATION > This agreement shall remain in effect for three (3) years from the Effective Date unless terminated earlier due to a material breach.

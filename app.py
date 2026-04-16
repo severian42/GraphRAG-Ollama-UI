@@ -61,6 +61,35 @@ import textwrap
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="gradio_client.documentation")
 
+# --- PATH & DISCOVERY HELPERS ---
+ROOT_DIR = "/app" if os.path.exists("/app/indexing") else "."
+INDEXING_ROOT = os.path.join(ROOT_DIR, "indexing")
+
+def list_output_folders(root):
+    """Dynamically lists indexing runs in the output folder."""
+    output_dir = os.path.join(root, "output")
+    if not os.path.exists(output_dir):
+        return []
+    return sorted([f for f in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, f)) and f != ".DS_Store"], reverse=True)
+
+def fetch_models(base_url, api_key, service_type):
+    """Fetches live models and filters out the 123b/24b strings that cause 404s."""
+    try:
+        if service_type.lower() == "ollama" or "11434" in str(base_url):
+            clean_url = base_url.replace("/v1", "")
+            response = requests.get(f"{clean_url}/api/tags", timeout=5)
+            data = response.json()
+            models = [m['name'] for m in data.get('models', [])]
+        else:
+            response = requests.get(f"{base_url}/v1/models", headers={"Authorization": f"Bearer {api_key}"}, timeout=5)
+            data = response.json()
+            models = [m['id'] for m in data.get('data', [])]
+        
+        # PURGE GHOSTS: This stops the 404 error by removing non-existent model strings
+        ghosts = ["mistral-large:123b-instruct-2407-q4_0", "mistral-small:24b"]
+        return [m for m in models if m not in ghosts]
+    except:
+        return []
 
 load_dotenv('indexing/.env')
 
@@ -388,32 +417,26 @@ Tokens Used: {tokens_used}
         print(f"Error parsing query response: {str(e)}")
         return response 
 
-def send_message(query_type, query, history, system_message, temperature, max_tokens, preset, community_level, response_type, custom_cli_args, selected_folder):
+def send_message(query_type, query, history, system_message, temperature, max_tokens, preset, community_level, response_type, custom_cli_args, selected_folder, selected_model):
     try:
         if query_type in ["global", "local"]:
             cli_args = construct_cli_args(query_type, preset, community_level, response_type, custom_cli_args, query, selected_folder)
-            logging.info(f"Executing {query_type} search with command: {' '.join(cli_args)}")
             result = run_graphrag_query(cli_args)
             parsed_result = parse_query_response(result)
-            logging.info(f"Parsed query result: {parsed_result}")
         else:  # Direct chat
-            llm_model = os.getenv("LLM_MODEL")
             api_base = os.getenv("LLM_API_BASE")
-            logging.info(f"Executing direct chat with model: {llm_model}")
-            
+            # THE FIX: Use 'selected_model' from the UI instead of os.getenv
+            logging.info(f"Executing direct chat with live selection: {selected_model}")
             try:
-                result = chat_with_llm(query, history, system_message, temperature, max_tokens, llm_model, api_base)
-                parsed_result = result  # No parsing needed for direct chat
-                logging.info(f"Direct chat result: {parsed_result[:100]}...")  # Log first 100 chars of result
+                result = chat_with_llm(query, history, system_message, temperature, max_tokens, selected_model, api_base)
+                parsed_result = result
             except Exception as chat_error:
-                logging.error(f"Error in chat_with_llm: {str(chat_error)}")
                 raise RuntimeError(f"Direct chat failed: {str(chat_error)}")
         
         history.append((query, parsed_result))
     except Exception as e:
         error_message = f"An error occurred: {str(e)}"
         logging.error(error_message)
-        logging.exception("Exception details:")
         history.append((query, error_message))
     
     return history, gr.update(value=""), update_logs()
@@ -1554,9 +1577,7 @@ def create_gradio_interface():
                         )
                         selected_folder = gr.Dropdown(
                             label="Select Index Folder to Chat With",
-                            choices=list_output_folders("./indexing"),
-                            value=None,
-                            interactive=True
+                            choices=list_output_folders(ROOT_DIR)
                         )
                         refresh_folder_btn = gr.Button("Refresh Folders", variant="secondary")
                         clear_chat_btn = gr.Button("Clear Chat", variant="secondary")
@@ -1703,7 +1724,8 @@ def create_gradio_interface():
                 community_level,
                 response_type,
                 custom_cli_args,
-                selected_folder
+                selected_folder,
+                llm_model_dropdown
             ],
             outputs=[chatbot, query_input, log_output]
         )
@@ -1721,7 +1743,8 @@ def create_gradio_interface():
                 community_level,
                 response_type,
                 custom_cli_args,
-                selected_folder
+                selected_folder,
+                llm_model_dropdown
             ],
             outputs=[chatbot, query_input, log_output]
         )

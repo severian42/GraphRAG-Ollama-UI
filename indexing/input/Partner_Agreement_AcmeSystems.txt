@@ -1,0 +1,17 @@
+SYSTEM INTEGRATOR PARTNER AGREEMENT
+
+EFFECTIVE DATE: June 15, 2025
+
+PARTIES: Global Tech Distribution Corp ("Distributor") and Acme Systems LLC ("System Integrator")
+
+1. PARTNER STATUS > Distributor grants Acme Systems LLC the status of "Authorized Platinum Integrator."
+
+2. AUTHORIZED PORTFOLIO > Acme Systems LLC is hereby authorized to procure, bundle, and resell the following software platforms provided by the Distributor:
+
+Quantus AI Studio
+
+Novalytica Enterprise
+
+NexusSearch Cloud
+
+3. LIABILITY AND INDEMNIFICATION > Acme Systems LLC assumes full responsibility for front-line deployment and integration services. Distributor shall not be held liable for SLA breaches caused by Acme Systems LLC's custom integrations. Acme Systems LLC must adhere to all original Vendor MSAs passed through the Distributor.

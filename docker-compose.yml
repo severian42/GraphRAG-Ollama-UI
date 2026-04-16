@@ -1,0 +1,66 @@
+# cbt-graph-rag-containerised: Dynamic Model Discovery (2026)
+version: '3.8'
+
+services:
+  graphrag-api:
+    build: .
+    container_name: graphrag-api
+    environment:
+      - PYTHONPATH=/app
+      - GRAPHRAG_API_KEY=ollama
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
+    ports:
+      - "8012:8012"
+    volumes:
+      - ./input:/app/input
+      - ./indexing:/app/indexing
+      - ./lancedb:/app/lancedb
+      - ./indexing/output:/app/output
+      - ./indexing/output:/app/indexing/output
+    command: python api.py --host 0.0.0.0 --port 8012
+
+  graphrag-ui:
+    build: .
+    container_name: graphrag-ui
+    environment:
+      - PYTHONPATH=/app
+      - GRAPHRAG_API_KEY=ollama
+      # THE FIX: Point UI to the API service name
+      - API_URL=http://graphrag-api:8012 
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - LLM_API_BASE=http://host.docker.internal:11434/v1
+      - EMBEDDINGS_API_BASE=http://host.docker.internal:11434/v1
+    ports:
+      - "7860:7860"
+    volumes:
+      - .:/app # Mount the whole root so .env updates are persisted to your Mac
+      - ./indexing/output:/app/output
+      - ./indexing/output:/app/indexing/output
+    depends_on:
+      - graphrag-api
+    command: python app.py
+
+  graphrag-indexer:
+    build: .
+    container_name: graphrag-indexer
+    environment:
+      - PYTHONPATH=/app
+      - GRAPHRAG_API_KEY=ollama
+      - API_URL=http://graphrag-api:8012 
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - LLM_API_BASE=http://host.docker.internal:11434/v1
+      - EMBEDDINGS_API_BASE=http://host.docker.internal:11434/v1
+    ports:
+      - "7861:7861"
+    volumes:
+      - .:/app
+      - ./indexing/output:/app/output
+      - ./indexing/output:/app/indexing/output
+    depends_on:
+      - graphrag-api
+    command: python index_app.py
+
+networks:
+  default:
+    name: graphrag-network
+    driver: bridge
